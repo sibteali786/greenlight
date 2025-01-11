@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -33,6 +34,29 @@ func (app *application) writeJSON(w http.ResponseWriter, status int, data interf
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	w.Write(js)
+	return nil
+}
+
+func (app *application) writeJSONViaEncoder(w http.ResponseWriter, status int, data interface{}, headers http.Header) error {
+	var jsonBuffer bytes.Buffer
+	js := json.NewEncoder(&jsonBuffer)
+	err := js.Encode(data)
+	if err != nil {
+		return err
+	}
+	for key, value := range headers {
+		w.Header()[key] = value
+	}
+	// Append a newline to make it easier to view in terminal applications.
+	jsonBuffer.Write([]byte("\n")) // good for terminals to see the end of the response
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Cache-Control", "public, max-age=100") // Example cache header, fresh for 100s
+	w.WriteHeader(status)
+
+	_, err = w.Write(jsonBuffer.Bytes())
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
