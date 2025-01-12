@@ -15,7 +15,7 @@ import (
 // header map containing any additional HTTP headers we want to include in the response.
 func (app *application) writeJSON(w http.ResponseWriter, status int, data interface{}, headers http.Header) error {
 	// Encode the data to JSON, returning the error if there was one.
-	js, err := json.MarshalIndent(data,"","\t")
+	js, err := json.MarshalIndent(data, "", "\t")
 	if err != nil {
 		return err
 	}
@@ -40,6 +40,7 @@ func (app *application) writeJSON(w http.ResponseWriter, status int, data interf
 func (app *application) writeJSONViaEncoder(w http.ResponseWriter, status int, data interface{}, headers http.Header) error {
 	var jsonBuffer bytes.Buffer
 	js := json.NewEncoder(&jsonBuffer)
+	js.SetIndent("", "\t")
 	err := js.Encode(data)
 	if err != nil {
 		return err
