@@ -9,11 +9,10 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 )
-
-// Define a writeJSON() helper for sending responses. This takes the destination
-// http.ResponseWriter, the HTTP status code to send, the data to encode to JSON, and a
-// header map containing any additional HTTP headers we want to include in the response.
-func (app *application) writeJSON(w http.ResponseWriter, status int, data interface{}, headers http.Header) error {
+//defining the envelop type here
+type envelope map[string]interface{}
+//  changedata parameter to be of type envelop
+func (app *application) writeJSON(w http.ResponseWriter, status int, data envelope, headers http.Header) error {
 	// Encode the data to JSON, returning the error if there was one.
 	js, err := json.MarshalIndent(data, "", "\t")
 	if err != nil {
@@ -40,7 +39,7 @@ func (app *application) writeJSON(w http.ResponseWriter, status int, data interf
 func (app *application) writeJSONViaEncoder(w http.ResponseWriter, status int, data interface{}, headers http.Header) error {
 	var jsonBuffer bytes.Buffer
 	js := json.NewEncoder(&jsonBuffer)
-	js.SetIndent("", "\t")
+	js.SetIndent("", "\t") // prettifying the json
 	err := js.Encode(data)
 	if err != nil {
 		return err
