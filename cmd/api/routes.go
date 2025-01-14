@@ -22,6 +22,7 @@ func (app *application) routes() *httprouter.Router {
 	// respectively.
 	router.HandlerFunc(http.MethodGet, "/v1/healthcheck", app.healthcheckHandler)
 	router.HandlerFunc(http.MethodPost, "/v1/movies", app.createMovieHandler)
+	router.HandlerFunc(http.MethodPost, "/v1/movies/um", app.createMovieHandlerViaUnmarshal) // decode body via unmarshal
 	router.HandlerFunc(http.MethodGet, "/v1/movies/:id", app.showMovieHandler)
 	// return the httprouter instance
 	return router
