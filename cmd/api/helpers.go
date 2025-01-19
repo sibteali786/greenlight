@@ -4,14 +4,18 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"io"
 	"net/http"
 	"strconv"
 
 	"github.com/julienschmidt/httprouter"
 )
-//defining the envelop type here
+
+// defining the envelop type here
 type envelope map[string]interface{}
-//  changedata parameter to be of type envelop
+
+// changedata parameter to be of type envelop
 func (app *application) writeJSON(w http.ResponseWriter, status int, data envelope, headers http.Header) error {
 	// Encode the data to JSON, returning the error if there was one.
 	js, err := json.MarshalIndent(data, "", "\t")
@@ -71,4 +75,31 @@ func (app *application) readIDParam(r *http.Request) (int64, error) {
 
 	return id, nil
 
+}
+
+func (app *application) readJSON(w http.ResponseWriter, r *http.Request, dst interface{}) error {
+	err := json.NewDecoder(r.Body).Decode(dst)
+	if err != nil {
+		var syntaxError *json.SyntaxError
+		var unmarshalTypeError *json.UnmarshalTypeError
+		var invalidUnmarshalError *json.InvalidUnmarshalError
+		switch {
+		case errors.As(err, &syntaxError):
+			return fmt.Errorf("body contains badly formatted JSON (at character %d)", syntaxError.Offset)
+		case errors.Is(err, io.ErrUnexpectedEOF):
+			return errors.New("body contains badly formatted JSON")
+		case errors.As(err, &unmarshalTypeError):
+			if unmarshalTypeError.Field != "" {
+				return fmt.Errorf("body contains incorrect JSON type for field %q", unmarshalTypeError.Field)
+			}
+			return fmt.Errorf("body contains incorrect JSON type (at character %d)", unmarshalTypeError.Offset)
+		case errors.As(err, &invalidUnmarshalError):
+			panic(err)
+		default:
+			return err
+		}
+
+	}
+
+	return nil
 }
