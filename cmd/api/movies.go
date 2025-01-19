@@ -31,7 +31,8 @@ func (app *application) createMovieHandler(w http.ResponseWriter, r *http.Reques
 	// Request response containing the error message.
 	err := app.readJSON(w, r, &input)
 	if err != nil {
-		app.errorResponse(w, r, http.StatusBadRequest, err.Error())
+		app.badRequestResponse(w, r, err)
+
 		return
 	}
 	// Dump content input struct in HTTP response
