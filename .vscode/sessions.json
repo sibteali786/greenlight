@@ -1,0 +1,35 @@
+{
+  "$schema": "https://cdn.statically.io/gh/nguyenngoclongdev/cdn/main/schema/v10/terminal-keeper.json",
+  "theme": "tribe",
+  "active": "default",
+  "activateOnStartup": true,
+  "keepExistingTerminals": false,
+  "sessions": {
+    "default": [
+      {
+        "name": "termianl",
+        "icon": "person",
+        "color": "terminal.ansiGreen"
+      },
+      [
+        {
+          "name": "docker:postgres",
+		  "autoExecuteCommands": true,
+          "commands": [
+            "docker start greenlight_db"
+          ]
+        }
+        
+      ]
+      
+    ],
+    "saved-session": [
+      {
+        "name": "connect",
+        "commands": [
+          ""
+        ]
+      }
+    ]
+  }
+}
