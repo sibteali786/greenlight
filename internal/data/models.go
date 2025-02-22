@@ -8,7 +8,7 @@ import (
 // Define a custom ErrRecordNotFound error. We'll return this from our Get() method when
 // looking up a movie that doesn't exist in our database.
 var (
-	ErrorRecordNotFound = errors.New("record not found")
+	ErrRecordNotFound = errors.New("record not found")
 )
 
 type Models struct {
