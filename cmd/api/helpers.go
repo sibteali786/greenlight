@@ -78,14 +78,14 @@ func (app *application) readIDParam(r *http.Request) (int64, error) {
 
 }
 
-func (app *application) readJSON(w http.ResponseWriter, r *http.Request, dst interface{}) error {
+func (app *application) readJSON(w http.ResponseWriter, r *http.Request, destination interface{}) error {
 	// using http.MaxBytesReader to limit the size of the request body to 1MB
 	maxBytes := 1_048_576
 	r.Body = http.MaxBytesReader(w, r.Body, int64(maxBytes))
 	// Initialize the json.Decoder, and call the DisallowUnknownFields() method on it before
 	dec := json.NewDecoder(r.Body)
 	dec.DisallowUnknownFields()
-	err := dec.Decode(dst)
+	err := dec.Decode(destination)
 	if err != nil {
 		var syntaxError *json.SyntaxError
 		var unmarshalTypeError *json.UnmarshalTypeError
